@@ -4,6 +4,7 @@ import productRouter from "./src/router/product.mjs";
 
 const server = express();
 
+server.use(express.json());
 server.use("/api/v1/user", userRouter);
 server.use("/api/v1/product", productRouter);
 

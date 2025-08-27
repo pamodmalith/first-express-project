@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { usersInfo } from "../data/user-info.mjs";
+import database from "../db/db.mjs";
 
 const userRouter = Router();
 
@@ -25,6 +26,23 @@ userRouter.get("/by-id", (req, res) => {
     msg: "user not found",
     data: null,
   });
+});
+
+userRouter.post("/create-user", async (req, res) => {
+  const userData = req.body;
+  try {
+    await database.user.create({
+      data: userData,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      msg: "internal server error",
+      data: null,
+    });
+  }
+  console.log(userData);
+  res.sendStatus(201);
 });
 
 export default userRouter;
