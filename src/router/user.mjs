@@ -3,6 +3,8 @@ import database from "../db/db.mjs";
 import { commonValidate, registerValidate } from "../utils/validatorMethod.mjs";
 import { matchedData, validationResult } from "express-validator";
 import { commonError } from "../utils/error-creator.mjs";
+import { tokenGen } from "../utils/jwt.mjs";
+import { checkAuth } from "../utils/auth-middleware.mjs";
 
 const userRouter = Router();
 
@@ -196,10 +198,13 @@ userRouter.post(
       });
       if (user !== null) {
         if (user.Password === data.Password) {
+          //generate token
+          const payload = { username: user.Username };
+          const token = tokenGen(payload);
           return res.status(200).json({
             msg: "user logging in successful",
             error: null,
-            data: user,
+            data: { token },
           });
         } else {
           return res.status(401).json({
@@ -225,5 +230,13 @@ userRouter.post(
     }
   }
 );
+
+userRouter.post("/validate", checkAuth, (req, res) => {
+  return res.status(200).json({
+    msg: "success",
+    error: null,
+    data: "token verified",
+  });
+});
 
 export default userRouter;
