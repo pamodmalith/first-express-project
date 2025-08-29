@@ -1,6 +1,8 @@
 import { Router } from "express";
-import { usersInfo } from "../data/user-info.mjs";
 import database from "../db/db.mjs";
+import { commonValidate, registerValidate } from "../utils/validatorMethod.mjs";
+import { matchedData, validationResult } from "express-validator";
+import { commonError } from "../utils/error-creator.mjs";
 
 const userRouter = Router();
 
@@ -134,5 +136,94 @@ userRouter.delete("/delete-user/:id", async (req, res) => {
     data: null,
   });
 });
+
+//register
+userRouter.post("/register", registerValidate, async (req, res) => {
+  const error = validationResult(req);
+  const lerr = commonError(error.array());
+  if (error.array().length) {
+    return res.status(400).json({
+      msg: "validation error",
+      error: lerr,
+      data: null,
+    });
+  }
+  const data = matchedData(req);
+  console.log(data);
+  try {
+    await database.user.create({ data });
+    return res.status(201).json({
+      msg: "user created",
+      error: null,
+      data: null,
+    });
+  } catch (error) {
+    console.log(error);
+    if (error.code === "P2002") {
+      return res.status(400).json({
+        msg: "error",
+        error: "user with this username already exists",
+        data: null,
+      });
+    }
+    return res.status(500).json({
+      msg: "error",
+      error: "database error",
+      data: null,
+    });
+  }
+});
+
+//login
+userRouter.post(
+  "/login",
+  commonValidate("Username", "Password"),
+  async (req, res) => {
+    const error = validationResult(req);
+    const lerr = commonError(error.array());
+    if (error.array().length) {
+      return res.status(400).json({
+        msg: "error",
+        error: lerr,
+        data: null,
+      });
+    }
+    const data = matchedData(req);
+    console.log(data);
+    try {
+      const user = await database.user.findUnique({
+        where: { Username: data.Username },
+      });
+      if (user !== null) {
+        if (user.Password === data.Password) {
+          return res.status(200).json({
+            msg: "user logging in successful",
+            error: null,
+            data: user,
+          });
+        } else {
+          return res.status(401).json({
+            msg: "error",
+            error: "invalid password",
+            data: null,
+          });
+        }
+      } else {
+        return res.status(404).json({
+          msg: "error",
+          error: "user not found",
+          data: null,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        msg: "error",
+        error: "database error",
+        data: null,
+      });
+    }
+  }
+);
 
 export default userRouter;
