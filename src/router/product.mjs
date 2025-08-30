@@ -130,7 +130,7 @@ productRouter.get("/:id", comPValidate("id"), async (req, res) => {
 
 //create product
 productRouter.post(
-  "/create-product",
+  "/create",
   comBValidate("Name", "UserId"),
   async (req, res) => {
     const error = validationResult(req);
