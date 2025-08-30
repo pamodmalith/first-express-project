@@ -97,9 +97,8 @@ profileRouter.get(
 
 //create new profile
 profileRouter.post(
-  "/create-profile",
-  comQValidate("UserId"),
-  comBValidate("Image"),
+  "/create",
+  comBValidate("Image", "UserId"),
   async (req, res) => {
     const error = validationResult(req);
     const err = commonError(error.array());
@@ -127,6 +126,13 @@ profileRouter.post(
       });
     } catch (error) {
       console.log(error);
+      if (error.code === "P2002") {
+        return res.status(400).json({
+          msg: "error",
+          error: "user has profile already",
+          data: null,
+        });
+      }
       return res.status(500).json({
         msg: "error",
         error: "database error",
