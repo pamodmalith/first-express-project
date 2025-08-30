@@ -162,8 +162,8 @@ profileRouter.put(
           Image: data.Image,
         },
       });
-      return res.status(201).json({
-        msg: "new profile created",
+      return res.status(200).json({
+        msg: "profile updated",
         error: null,
         data: newProfile,
       });
