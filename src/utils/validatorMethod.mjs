@@ -21,10 +21,18 @@ export const registerValidate = [
   body("Name").notEmpty().withMessage("Name is required"),
 ];
 
-export const commonValidate = (...keys) => {
+export const comValidate = (...keys) => {
   const commonVal = [];
   keys.forEach((k) => {
     commonVal.push(body(k).notEmpty().withMessage(`${k} is required`));
+  });
+  return commonVal;
+};
+
+export const comQValidate = (...keys) => {
+  const commonVal = [];
+  keys.forEach((k) => {
+    commonVal.push(query(k).notEmpty().withMessage(`${k} is required`));
   });
   return commonVal;
 };
