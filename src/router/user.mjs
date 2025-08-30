@@ -61,6 +61,86 @@ userRouter.get("/by-id", async (req, res) => {
   });
 });
 
+//get user profile
+userRouter.get("/profile/:userId", async (req, res) => {
+  const { userId } = req.params;
+  if (userId !== undefined && userId !== "") {
+    try {
+      const profileData = await database.user.findUnique({
+        select: {
+          Profile: {
+            select: {
+              Image: true,
+            },
+          },
+        },
+        where: {
+          Id: Number(userId),
+        },
+      });
+      if (!profileData) {
+        return res.status(404).json({
+          msg: "user not found",
+          data: null,
+        });
+      }
+      return res.status(200).json({
+        msg: "user data",
+        data: profileData,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        msg: "error",
+        error: "internal server error",
+        data: null,
+      });
+    }
+  }
+  return res.status(400).json({
+    msg: "some error",
+    data: null,
+  });
+});
+
+//get user products
+userRouter.get("/product/:userId", async (req, res) => {
+  const { userId } = req.params;
+  if (userId !== undefined && userId !== "") {
+    try {
+      const userProducts = await database.user.findMany({
+        select: {
+          Products: true,
+        },
+        where: {
+          Id: Number(userId),
+        },
+      });
+      if (!userProducts) {
+        return res.status(404).json({
+          msg: "no products found",
+          data: null,
+        });
+      }
+      return res.status(200).json({
+        msg: "user products",
+        data: userProducts,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        msg: "error",
+        error: "internal server error",
+        data: null,
+      });
+    }
+  }
+  return res.status(400).json({
+    msg: "some error",
+    data: null,
+  });
+});
+
 //create user
 userRouter.post("/create-user", async (req, res) => {
   const userData = req.body;
