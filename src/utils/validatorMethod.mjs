@@ -1,4 +1,4 @@
-import { body, query } from "express-validator";
+import { body, param, query } from "express-validator";
 
 export const validatorMethod = [
   query("name").isEmail().withMessage("Name should be a valid email"),
@@ -21,18 +21,28 @@ export const registerValidate = [
   body("Name").notEmpty().withMessage("Name is required"),
 ];
 
-export const comValidate = (...keys) => {
-  const commonVal = [];
+export const comBValidate = (...keys) => {
+  const bodyVal = [];
   keys.forEach((k) => {
-    commonVal.push(body(k).notEmpty().withMessage(`${k} is required`));
+    bodyVal.push(body(k).notEmpty().withMessage(`${k} is required`));
   });
-  return commonVal;
+  return bodyVal;
 };
 
 export const comQValidate = (...keys) => {
-  const commonVal = [];
+  const queryVal = [];
   keys.forEach((k) => {
-    commonVal.push(query(k).notEmpty().withMessage(`${k} is required`));
+    queryVal.push(query(k).notEmpty().withMessage(`${k} is required`));
   });
-  return commonVal;
+  return queryVal;
+};
+
+export const comPValidate = (...keys) => {
+  const pathVal = [];
+  keys.forEach((k) => {
+    pathVal.push(
+      param(k).notEmpty().isNumeric().withMessage(`${k} should be number`)
+    );
+  });
+  return pathVal;
 };

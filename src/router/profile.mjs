@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { comQValidate, comValidate } from "../utils/validatorMethod.mjs";
+import { comQValidate, comBValidate } from "../utils/validatorMethod.mjs";
 import { matchedData, param, validationResult } from "express-validator";
 import { commonError } from "../utils/error-creator.mjs";
 import database from "../db/db.mjs";
@@ -99,7 +99,7 @@ profileRouter.get(
 profileRouter.post(
   "/create-profile",
   comQValidate("UserId"),
-  comValidate("Image"),
+  comBValidate("Image"),
   async (req, res) => {
     const error = validationResult(req);
     const err = commonError(error.array());
@@ -139,7 +139,7 @@ profileRouter.post(
 //update profile
 profileRouter.put(
   "/update",
-  comValidate("Image"),
+  comBValidate("Image"),
   comQValidate("userId"),
   async (req, res) => {
     const error = validationResult(req);

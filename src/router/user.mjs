@@ -1,6 +1,6 @@
 import { Router } from "express";
 import database from "../db/db.mjs";
-import { comValidate, registerValidate } from "../utils/validatorMethod.mjs";
+import { comBValidate, registerValidate } from "../utils/validatorMethod.mjs";
 import { matchedData, validationResult } from "express-validator";
 import { commonError } from "../utils/error-creator.mjs";
 import { tokenGen } from "../utils/jwt.mjs";
@@ -179,7 +179,7 @@ userRouter.post("/register", registerValidate, async (req, res) => {
 //login
 userRouter.post(
   "/login",
-  comValidate("Username", "Password"),
+  comBValidate("Username", "Password"),
   async (req, res) => {
     const error = validationResult(req);
     const lerr = commonError(error.array());
