@@ -32,5 +32,13 @@ testRouter.get("/read-cookie", (req, res) => {
   console.log(req.headers.cookie);
   res.sendStatus(200);
 });
+testRouter.get("/get-session", (req, res) => {
+  req.session["auk-session"] = { name: "Pamod", age: 24 };
+  res.sendStatus(200);
+});
 
+testRouter.get("/read-session", (req, res) => {
+  console.log(req.session);
+  res.sendStatus(200);
+});
 export default testRouter;
